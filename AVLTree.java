@@ -23,10 +23,25 @@ public class AVLTree<T extends Comparable<T>> implements SelfBalancingBST<T> {
      */
 
     private AVLTree<T> rotateLeft() {
+
+        AVLTree<T> right = this._right;
+        //setting it to be right's left child
+        this._right = right._left;
+        right._left = this;
+        adjustSize();
+        adjustHeight();
+
+
         // You should implement left rotation and then use this
         // method as needed when fixing imbalances.
         // TODO
         return null;
+    }
+    public void adjustHeight(){
+
+    }
+    public void adjustSize(){
+
     }
 
     /**
@@ -44,13 +59,58 @@ public class AVLTree<T extends Comparable<T>> implements SelfBalancingBST<T> {
     @Override
     public SelfBalancingBST<T> insert(T element) {
         // TODO
+            // one traverses i suppose through the Getters?
+            //element here works as a cur basically
+            int result = _element.compareTo(element);
+            if (result <= 0) {     // insert on right, or if they are equal
+                if (_right.isEmpty()) {
+                    _right = new NonEmptyBST<T>(element);
+                } else {
+                    _right = _right.insert(element);
+                }
+            } else if (result > 0) {            // insert on left
+                if (_left.isEmpty()) {
+                    _left = new NonEmptyBST<T>(element);
+                } else {
+                    _left = _left.insert(element);
+                }
+
+            }
+
+            // if result = 0,inserting with euivalence to root
+            return this;
         return null;
     }
 
     @Override
     public SelfBalancingBST<T> remove(T element) {
         // TODO
-        return null;
+
+        if(isEmpty()){
+            return new EmptyBST<>();
+        }
+        if (_element.compareTo(element) < 0) {
+            _right = _right.remove(element);
+        } else if (_element.compareTo(element) > 0) {
+            _left = _left.remove(element);
+        } else if (element.compareTo(_element) == 0) { // Ie they do equal
+
+            if((_right.isEmpty()) && (_left.isEmpty())){
+                //System.out.println("Here"+ element);
+                return new EmptyBST<T>();
+            }
+            else if ((_right.isEmpty())) { // cases where node have only one child
+                return _left;
+            } else if ((_left.isEmpty())) { // cases where node have only one child
+                return _right;
+            } else { // case 3. node has 2 children. Lets use successor from right.
+                NonEmptyBST<T> successor = findMinNode((NonEmptyBST<T>) _right);
+                _right = _right.remove(successor._element);
+                _element = successor._element;
+
+            }
+        }
+        return this;
     }
 
     @Override
