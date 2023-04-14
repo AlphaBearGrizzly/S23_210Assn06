@@ -23,13 +23,10 @@ public class AVLTree<T extends Comparable<T>> implements SelfBalancingBST<T> {
      */
 
     private AVLTree<T> rotateLeft() {
-
         AVLTree<T> right = this._right;
-        //setting it to be right's left child
         this._right = right._left;
         right._left = this;
-        adjustSize();
-        adjustHeight();
+
 
 
         // You should implement left rotation and then use this
@@ -41,6 +38,17 @@ public class AVLTree<T extends Comparable<T>> implements SelfBalancingBST<T> {
 
     }
     public void adjustSize(){
+
+    }
+
+
+    private AVLTree<T> engageRotation(AVLTree<T> thisOne){
+        int balance = getBalance();
+        if (balance > 1){
+            thisOne._left = rotateLeft(thisOne.getLeft());
+            return null;
+        }
+        if (balance < -1)
 
     }
 
