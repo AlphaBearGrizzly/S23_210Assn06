@@ -2,6 +2,13 @@ package assn06;
 
 public class Main {
     public static void main(String[] args) {
+//
+        //1. Convert your code that you wrote for BSTs (for insert and delete) to work with the AVL Trees.
+
+        //2. Create a method that checks if you need to rotate 
+
+        //3. Create a method that does the rotation (rotate right / rotate left)
+
 
         // Create a new empty tree.
         SelfBalancingBST<Integer> avl_bst = new AVLTree<Integer>();
