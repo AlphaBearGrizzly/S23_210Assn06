@@ -26,30 +26,14 @@ public class AVLTree<T extends Comparable<T>> implements SelfBalancingBST<T> {
         AVLTree<T> right = this._right;
         this._right = right._left;
         right._left = this;
-
+        this.updateHeight();
+        this._right.updateHeight();
 
 
         // You should implement left rotation and then use this
         // method as needed when fixing imbalances.
         // TODO
         return null;
-    }
-    public void adjustHeight(){
-
-    }
-    public void adjustSize(){
-
-    }
-
-
-    private AVLTree<T> engageRotation(AVLTree<T> thisOne){
-        int balance = getBalance();
-        if (balance > 1){
-            thisOne._left = rotateLeft(thisOne.getLeft());
-            return null;
-        }
-        if (balance < -1)
-
     }
 
     /**
@@ -62,63 +46,110 @@ public class AVLTree<T extends Comparable<T>> implements SelfBalancingBST<T> {
         // You should implement right rotation and then use this
         // method as needed when fixing imbalances.
         // TODO
+
+
         return null;
     }
+
+    public void updateHeight(){
+        int maxHeight = Math.max(heightChecker(this._left), heightChecker(this._right));
+        this._height = maxHeight + 1;
+    }
+
+    private int heightChecker(AVLTree<T> tree){
+        return tree != null ? tree._height : 0;
+    }
+
+
+    private AVLTree<T> engageRotation(AVLTree<T> thisOne){
+        int balanceF = thisOne.balanceFactor();
+        if (balanceF > 1){
+            // ie, this means that its left heavy
+            if(thisOne._left.balanceFactor() < 0){
+                thisOne._left = thisOne._left.rotateLeft();
+            }
+            return thisOne.rotateRight();
+        }
+        if (balanceF < -1){
+            // ie, this means that its right heavy
+            if(thisOne._right.balanceFactor() > 0){
+                thisOne._right = thisOne._right.rotateLeft();
+            }
+            return thisOne.rotateLeft();
+        }
+        return thisOne;
+    }
+
     @Override
-    public SelfBalancingBST<T> insert(T element) {
+    public AVLTree<T> insert(T element) {
         // TODO
             // one traverses i suppose through the Getters?
             //element here works as a cur basically
-            int result = _element.compareTo(element);
+            int result = _value.compareTo(element);
             if (result <= 0) {     // insert on right, or if they are equal
                 if (_right.isEmpty()) {
-                    _right = new NonEmptyBST<T>(element);
+                    _right = new AVLTree<T>(element);
                 } else {
                     _right = _right.insert(element);
                 }
             } else if (result > 0) {            // insert on left
                 if (_left.isEmpty()) {
-                    _left = new NonEmptyBST<T>(element);
+                    _left = new AVLTree<T>(element);
                 } else {
                     _left = _left.insert(element);
                 }
 
             }
+            this._size +=1;
 
             // if result = 0,inserting with euivalence to root
             return this;
-        return null;
     }
 
     @Override
-    public SelfBalancingBST<T> remove(T element) {
+    public AVLTree<T> remove(T element) {
         // TODO
-
         if(isEmpty()){
-            return new EmptyBST<>();
+            return this;
         }
-        if (_element.compareTo(element) < 0) {
+        if (_value.compareTo(element) < 0) {
             _right = _right.remove(element);
-        } else if (_element.compareTo(element) > 0) {
+        } else if (_value.compareTo(element) > 0) {
             _left = _left.remove(element);
-        } else if (element.compareTo(_element) == 0) { // Ie they do equal
+        } else if (element.compareTo(_value) == 0) { // Ie they do equal
 
             if((_right.isEmpty()) && (_left.isEmpty())){
-                //System.out.println("Here"+ element);
-                return new EmptyBST<T>();
+                return this;
             }
             else if ((_right.isEmpty())) { // cases where node have only one child
                 return _left;
             } else if ((_left.isEmpty())) { // cases where node have only one child
                 return _right;
             } else { // case 3. node has 2 children. Lets use successor from right.
-                NonEmptyBST<T> successor = findMinNode((NonEmptyBST<T>) _right);
-                _right = _right.remove(successor._element);
-                _element = successor._element;
+                AVLTree<T> successor = findMinNode(_right);
+                _right = _right.remove(successor._value);
+                _value = successor._value;
 
             }
         }
-        return this;
+        this._size -=1;
+        this.updateHeight();
+        return engageRotation(this);
+    }
+
+    AVLTree<T> findMinNode(AVLTree<T> thing) {    // returns smallest node in tree starting at node
+        if (thing.getLeft().isEmpty()) {
+            return(thing);
+        } else {
+            return findMinNode((AVLTree<T>) thing.getLeft());
+        }
+
+    }
+
+    public int balanceFactor(){
+        return this != null
+                ? heightChecker(this._left) - heightChecker(this._right)
+                : 0;
     }
 
     @Override
