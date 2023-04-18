@@ -15,7 +15,14 @@ public class AVLTree<T extends Comparable<T>> implements SelfBalancingBST<T> {
         _height = -1;
         _size = 0;
     }
-
+    // overloaded constructor beeyotch
+    public AVLTree(T element) {
+        _value = element;
+        _left = null;
+        _right = null;
+        _height = -1;
+        _size = 0;
+    }
     /**
      *
      * Rotates the tree left and returns
@@ -63,19 +70,19 @@ public class AVLTree<T extends Comparable<T>> implements SelfBalancingBST<T> {
 
     private AVLTree<T> engageRotation(AVLTree<T> thisOne){
         int balanceF = thisOne.balanceFactor();
-        if (balanceF > 1){
-            // ie, this means that its left heavy
-            if(thisOne._left.balanceFactor() < 0){
-                thisOne._left = thisOne._left.rotateLeft();
-            }
-            return thisOne.rotateRight();
-        }
         if (balanceF < -1){
             // ie, this means that its right heavy
             if(thisOne._right.balanceFactor() > 0){
                 thisOne._right = thisOne._right.rotateLeft();
             }
             return thisOne.rotateLeft();
+        }
+        else if (balanceF > 1){
+            // ie, this means that its left heavy
+            if(thisOne._left.balanceFactor() < 0){
+                thisOne._left = thisOne._left.rotateLeft();
+            }
+            return thisOne.rotateRight();
         }
         return thisOne;
     }
@@ -98,10 +105,8 @@ public class AVLTree<T extends Comparable<T>> implements SelfBalancingBST<T> {
                 } else {
                     _left = _left.insert(element);
                 }
-
             }
             this._size +=1;
-
             // if result = 0,inserting with euivalence to root
             return this;
     }
